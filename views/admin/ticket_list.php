@@ -7,9 +7,16 @@ use yii\grid\GridView;
 /* @var $searchModel app\models\PostsSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Ticket';
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Ticket List';
 ?>
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item"><a href="/admin">Admin Dashboard</a></li>
+    <li class="breadcrumb-item active" aria-current="page"><?=$this->title?></li>
+  </ol>
+</nav>
 <div class="dashboard" id="ticket-listing">
 
     <h1><?= Html::encode($this->title) ?></h1>

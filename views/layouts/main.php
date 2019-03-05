@@ -43,13 +43,19 @@ AppAsset::register($this);
             ['label' => 'Home', 'url' => ['/page/index']],
             ['label' => 'About', 'url' => ['/page/about']],
             ['label' => 'Contact', 'url' => ['/page/contact']],
-            Yii::$app->user->isGuest ? (
-                ['label' => 'Login', 'url' => ['/site/login']]
+            (isset($_SESSION['login_as']) && $_SESSION['login_as'] == 'admin')?
+                ['label' => 'Admin Dashboard', 'url' => ['/admin/dashboard']] : '',
+            (isset($_SESSION['login_as']) && $_SESSION['login_as'] == 'member')?
+                ['label' => 'Member Dashboard', 'url' => ['/member/dashboard']] : '',
+
+
+            (empty($_SESSION['current_user'])) ? (
+                ['label' => 'Login', 'url' => ['/login']]
             ) : (
                 '<li>'
-                . Html::beginForm(['/site/logout'], 'post')
+                . Html::beginForm(['/page/logout'], 'post')
                 . Html::submitButton(
-                    'Logout (' . Yii::$app->user->identity->username . ')',
+                    'Logout (' . $_SESSION['current_user']->username . ')',
                     ['class' => 'btn btn-link logout']
                 )
                 . Html::endForm()
@@ -59,11 +65,10 @@ AppAsset::register($this);
     ]);
     NavBar::end();
     ?>
-
     <div class="container">
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-        ]) ?>
+            ]) ?>
         <?= Alert::widget() ?>
         <?= $content ?>
     </div>
@@ -75,11 +80,6 @@ AppAsset::register($this);
 
         <p class="pull-right"><?= Yii::powered() ?></p>
     </div>
-    <!-- <script src="C:\code\project\views\member\member.js"></script> -->
-    <!-- <script src="../"></script>
-    <script src="../"></script>
-    <script src="../"></script>
-    <script src="../"></script> -->
 </footer>
 
 <?php $this->endBody() ?>

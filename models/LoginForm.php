@@ -14,68 +14,73 @@ use yii\base\Model;
 class LoginForm extends Model
 {
     public $username;
+    public $email;
     public $password;
-    public $rememberMe = true;
-
     private $_user = false;
+    private $_admin = false;
+    private $_member = false;
 
 
-    /**
-     * @return array the validation rules.
-     */
     public function rules()
     {
         return [
-            // username and password are both required
             [['username', 'password'], 'required'],
-            // rememberMe must be a boolean value
-            ['rememberMe', 'boolean'],
-            // password is validated by validatePassword()
-            ['password', 'validatePassword'],
+            ['password', 'validatePassword'], //function
+        ];
+    }
+    public function attributeLabels(){
+        return [
+            'username' => 'Username/ Email',
         ];
     }
 
-    /**
-     * Validates the password.
-     * This method serves as the inline validation for password.
-     *
-     * @param string $attribute the attribute currently being validated
-     * @param array $params the additional name-value pairs given in the rule
-     */
     public function validatePassword($attribute, $params)
     {
         if (!$this->hasErrors()) {
             $user = $this->getUser();
-
-            if (!$user || !$user->validatePassword($this->password)) {
+            if (!$user || !$user->validatePassword($user['password'], $this->password)) {
                 $this->addError($attribute, 'Incorrect username or password.');
             }
         }
     }
 
-    /**
-     * Logs in a user using the provided username and password.
-     * @return bool whether the user is logged in successfully
-     */
-    public function login()
-    {
+    public function login(){
         if ($this->validate()) {
-            return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600*24*30 : 0);
+            $user = $this->getUser();
+            if($user['username'] == $this->username || $user['email'] == $this->username ){
+                $_SESSION['current_user'] = $user;
+                return true;
+            }
+        } else {
+            return false;
         }
-        return false;
     }
 
-    /**
-     * Finds user by [[username]]
-     *
-     * @return User|null
-     */
-    public function getUser()
-    {
+    public function getUser(){
         if ($this->_user === false) {
-            $this->_user = User::findByUsername($this->username);
-        }
+            $this->_admin = Admin::findByUsername($this->username);
+            $this->_member = Member::findByEmail($this->username);
 
+            $this->logs($this->username);
+            $this->logs($this->_admin);
+            $this->logs($this->_member);
+
+
+            if(isset($this->_admin)){
+                $this->_user = $this->_admin;
+                $_SESSION['login_as']  = ($this->_user) ? 'admin': '';
+            }else if(isset($this->_member)){
+                $this->_user = $this->_member;
+                $_SESSION['login_as']  = ($this->_user) ? 'member': '';
+            }
+        }
         return $this->_user;
     }
+
+    public function logs($message){
+        $date = date('d.m.Y h:i:s');
+        $log = "[Date:  ".$date."] Model/LoginForm -  Msg: display ".print_r($message, true) ."\n";
+        error_log($log, 3, "c:/code/my-errors.log");
+    }
+
 }

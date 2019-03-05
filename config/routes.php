@@ -1,7 +1,8 @@
 <?php
 return [
     //'' => 'site/index',
-    'login' => 'site/login',
+    // 'login' => 'site/login',
+    // 'logout' => 'site/logout',
     'site/contact' => 'site/contact',
     // 'about' => 'site/about',
 
@@ -46,7 +47,10 @@ return [
     'admin/member_delete' => 'admin/member-delete',
 
     '' => 'page/index',
+    'signup' => 'page/signup',
+    'login' => 'page/login',
+    'logout' => 'page/logout',
     'about' => 'page/about',
     'contact' => 'page/contact',
-    'register' => 'page/register'
+    'register' => 'page/register',
 ];

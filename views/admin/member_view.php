@@ -7,10 +7,17 @@ use yii\widgets\DetailView;
 /* @var $model app\models\Posts */
 
 $this->title = "Member Details";
-$this->params['breadcrumbs'][] = ['label' => 'Member List', 'url' => ['/admin/member_list']];
-$this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item"><a href="/admin">Admin Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="/admin/member_list">Members List</a></li>
+    <li class="breadcrumb-item active" aria-current="page"><?=$this->title?></li>
+  </ol>
+</nav>
+
 <div class="posts-view" id="member-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
@@ -27,12 +34,16 @@ $this->params['breadcrumbs'][] = $this->title;
             <td>{{ name }}</td>
         </tr>
         <tr>
-            <th>Address</th>
-            <td>{{ address }}</td>
+            <th>Username</th>
+            <td>{{ username }}</td>
         </tr>
         <tr>
             <th>Email</th>
             <td>{{ email }}</td>
+        </tr>
+        <tr>
+            <th>Address</th>
+            <td>{{ address }}</td>
         </tr>
         <tr>
             <th>Status</th>
@@ -51,6 +62,7 @@ $this->params['breadcrumbs'][] = $this->title;
             name : <?=json_encode($member->name); ?>,
             address : <?=json_encode($member->address); ?>,
             email : <?=json_encode($member->email); ?>,
+            username : <?=json_encode($member->username); ?>,
             status : <?=json_encode($member->status); ?>,
             id : <?=json_encode($member->_id); ?>
         },

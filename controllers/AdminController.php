@@ -47,15 +47,21 @@ class AdminController extends Controller
             $post = Yii::$app->request->post();
             $request = $post['member'];
 
-            $collection = Yii::$app->mongodb->getCollection($this->member_table);
+            if($request['password'] !== $request['confirm_password']){
+                Yii::$app->session->setFlash('error','Confirm password did not match with Password');
+            }
 
-            $id = $collection->insert([
-                'name' => $request['name'],
-                'address' =>  $request['address'],
-                'email' =>  $request['email'],
-                'status' =>  2,//default
-            ]);
-
+            if($request['password'] == $request['confirm_password']){
+                $collection = Yii::$app->mongodb->getCollection($this->member_table);
+                $id = $collection->insert([
+                    'name' => $request['name'],
+                    'address' =>  $request['address'],
+                    'email' =>  $request['email'],
+                    'username' =>  $request['username'],
+                    'password' =>  $request['password'],
+                    'status' =>  2,//default
+                ]);
+            }
             if(isset($id)){
                 return $this->redirect(['member_view', 'id' => (string)$id]);
             }
@@ -90,6 +96,7 @@ class AdminController extends Controller
                     'name' => $request['name'],
                     'address' =>  $request['address'],
                     'email' =>  $request['email'],
+                    'username' =>  $request['username'],
                     'status' =>  $request['status'],
                      ];
 
@@ -158,7 +165,7 @@ class AdminController extends Controller
     //DELETE $this->logs() too
     public function logs($message){
         $date = date('d.m.Y h:i:s');
-        $log = "[Date:  ".$date."]  -  Msg: display ".print_r($message, true) ."\n";
+        $log = "[Date:  ".$date."] A -  Msg: display ".print_r($message, true) ."\n";
         error_log($log, 3, "c:/code/my-errors.log");
     }
 

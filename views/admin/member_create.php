@@ -27,10 +27,13 @@ $this->title = 'Create New Member';
 
 
     <div class="posts-form">
-    <?php $form = ActiveForm::begin(); $model->status = 2; ?>
+    <?php $form = ActiveForm::begin(['options' => ['class' => 'col-md-5']]); $model->status = 2; ?>
         <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-        <?= $form->field($model, 'address')->textarea(['rows' => 2]) ?>
+        <?= $form->field($model, 'address')->textarea(['rows' => 3]) ?>
         <?= $form->field($model, 'email')->textInput() ?>
+        <?= $form->field($model, 'username')->textInput() ?>
+        <?= $form->field($model, 'password')->passwordInput() ?>
+        <?= $form->field($model, 'confirm_password')->passwordInput() ?>
         <!-- set as default '2' for new comers -->
         <?php $form->field($model, 'status')->dropDownList($status)  ?>
         <div class="form-group">
