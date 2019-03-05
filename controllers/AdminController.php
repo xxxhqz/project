@@ -16,11 +16,21 @@ class AdminController extends Controller
     public $member_table = 'member';
     public $contact_table = 'contact';
 
+    public function check_authorization(){
+        if($_SESSION['login_as'] === 'admin'){
+            return true;
+        }else{
+            throw new \yii\web\HttpException(403, 'You are not authorized to access this area');
+        }
+    }
+
     public function actionDashboard(){
+        $this->check_authorization();
         return $this->render('dashboard');
     }
 
     public function get_members(){
+        $this->check_authorization();
         $query = new Query;
         $members = $query->from($this->member_table)
                 ->all();
@@ -35,12 +45,14 @@ class AdminController extends Controller
     }
 
     public function actionMemberList(){
+        $this->check_authorization();
         $members = $this->get_members();
 
         return $this->render('member_list', $members);
     }
 
     public function actionMemberCreate(){
+        $this->check_authorization();
         $model = new Member;
 
         if ($model->load(Yii::$app->request->post())) {
@@ -59,7 +71,7 @@ class AdminController extends Controller
                     'email' =>  $request['email'],
                     'username' =>  $request['username'],
                     'password' =>  $request['password'],
-                    'status' =>  2,//default
+                    'status' =>  (int)2,//default
                 ]);
             }
             if(isset($id)){
@@ -74,13 +86,16 @@ class AdminController extends Controller
     }
 
     public function actionMemberView($id){
-        $this->logs($this->findModel($id));
+        $this->check_authorization();
+
         return $this->render('member_view', [
             'member' => $this->findModel($id),
         ]);
     }
 
     public function actionMemberUpdate($id){
+        $this->check_authorization();
+
         $model = $this->findModel($id);
         $existing_data = $model;
 
@@ -97,7 +112,7 @@ class AdminController extends Controller
                     'address' =>  $request['address'],
                     'email' =>  $request['email'],
                     'username' =>  $request['username'],
-                    'status' =>  $request['status'],
+                    'status' =>  (int)$request['status'],
                      ];
 
                 $post = Yii::$app->request->post();
@@ -118,6 +133,7 @@ class AdminController extends Controller
     }
 
     public function actionMemberDelete($id){
+        $this->check_authorization();
         $member = $this->findModel($id);
 
         $members = $this->get_members();
@@ -134,6 +150,7 @@ class AdminController extends Controller
     }
 
     protected function findModel($id){
+        $this->check_authorization();
         if (($model = Member::findOne($id)) !== null) {
             return $model;
         }
@@ -156,6 +173,8 @@ class AdminController extends Controller
     }
 
     public function actionTicketList(){
+        $this->check_authorization();
+
         $tickets = $this->get_tickets();
 
         return $this->render('ticket_list', $tickets);

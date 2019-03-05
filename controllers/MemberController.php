@@ -15,7 +15,16 @@ class MemberController extends Controller
 
     public $member_table = 'member';
 
+    public function check_authentication(){
+        if($_SESSION['login_as'] === 'member'){
+            return true;
+        }else{
+            throw new \yii\web\HttpException(403, 'You are not authorized to access this area');
+        }
+    }
+
     public function actionDashboard(){
+        $this->check_authentication();
         return $this->render('dashboard');
     }
 
@@ -34,49 +43,21 @@ class MemberController extends Controller
     }
 
     public function actionList(){
+        $this->check_authentication();
         $members = $this->get_members();
 
         return $this->render('list', $members);
     }
 
-    public function actionCreate()
-    {
-        $model = new Member;
-
-        if ($model->load(Yii::$app->request->post())) {
-            $post = Yii::$app->request->post();
-            $request = $post['member'];
-
-            $collection = Yii::$app->mongodb->getCollection($this->member_table);
-
-            $id = $collection->insert([
-                'name' => $request['name'],
-                'address' =>  $request['address'],
-                'email' =>  $request['email'],
-                'status' =>  2,//default
-            ]);
-
-            if(isset($id)){
-                return $this->redirect(['view', 'id' => (string)$id]);
-            }
-
-        }
-
-        return $this->render('create', [
-            'model' => $model,
-        ]);
-    }
-
-    public function actionView($id)
-    {
-        $this->logs($this->findModel($id));
+    public function actionView($id){
+        $this->check_authentication();
         return $this->render('view', [
             'member' => $this->findModel($id),
         ]);
     }
 
-    public function actionUpdate($id)
-    {
+    public function actionUpdate($id){
+        $this->check_authentication();
         $model = $this->findModel($id);
         $existing_data = $model;
 
@@ -109,8 +90,8 @@ class MemberController extends Controller
         ]);
     }
 
-    public function actionDelete($id)
-    {
+    public function actionDelete($id){
+        $this->check_authentication();
         $member = $this->findModel($id);
         if($member){
             $member->delete();
@@ -124,13 +105,11 @@ class MemberController extends Controller
         return $this->render('list', $members);
     }
 
-    protected function findModel($id)
-    {
+    protected function findModel($id){
         if (($model = Member::findOne($id)) !== null) {
             return $model;
         }
         else return null;
-        //throw new NotFoundHttpException('The requested page does not exist.');
     }
 
     //DELETE THIS FUNCTION FOR TESTING ONLY.

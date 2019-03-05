@@ -28,8 +28,8 @@ return [
      'admin' => 'admin/dashboard',
     // 'admin/list' => 'admin/list',
     // 'admin/create' => 'admin/create',
-    // 'admin/view' => 'admin/view',
-    // 'admin/update' => 'admin/update',
+    'admin/view' => 'admin/view',
+    'admin/update' => 'admin/update',
     // 'admin/delete' => 'admin/delete',
 
     // //ticket - contact
@@ -50,6 +50,7 @@ return [
     'signup' => 'page/signup',
     'login' => 'page/login',
     'logout' => 'page/logout',
+    'reset_password' => 'page/reset-password',
     'about' => 'page/about',
     'contact' => 'page/contact',
     'register' => 'page/register',

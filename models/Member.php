@@ -23,7 +23,6 @@ class member extends ActiveRecord
     {
         return [
             [['name', 'address', 'email','status', 'username'], 'required'],
-            [['name', 'address', 'email','status', 'username'], 'required'],
             [['name', 'address', 'passwowrd', 'confirm_password'], 'string'],
             [['name'], 'unique'],
             ['status', 'default', 'value' => self::STATUS_INACTIVE],
@@ -40,7 +39,7 @@ class member extends ActiveRecord
 
     public static function findIdentity($id) {
 
-        return static::findOne(['_id' => $id, 'status' => self::STATUS_ACTIVE]);
+        return static::findOne(['_id' => $id]);
     }
 
     public static function findIdentityByAccessToken($token, $type = null) {
@@ -48,11 +47,17 @@ class member extends ActiveRecord
     }
 
     public static function findByUsername($username) {
-        return static::findOne(['username' => $username, 'status' => self::STATUS_ACTIVE]);
+        return static::findOne(['username' => $username]);
     }
 
     public static function findByEmail($email) {
-        return static::findOne(['email' => $email, 'status' => self::STATUS_ACTIVE]);
+        return static::findOne(['email' => $email]);
+    }
+
+    public function setPassword() {
+        $this->password = rand(10000,99999);
+        (int)$this->setAttribute('password', $this->password);
+        return $this->password;
     }
 
     public function getId(){
@@ -68,7 +73,7 @@ class member extends ActiveRecord
     }
 
     public function validatePassword($password) {
-        return $password == $this->password    ;
+        return $password == $this->password;
     }
 
     public function generateAuthKey() {

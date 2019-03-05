@@ -1,17 +1,10 @@
 <?php
 
-$status = array(
-    '' => 'Select',
-    '1' => 'Yes',
-    '2' => 'No'
-);
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 $this->title = 'Create New Member';
-// $this->params['breadcrumbs'][] = ['label' => 'Admin Dashboard', 'url' => ['/admin/dashboard']];
-// $this->params['breadcrumbs'][] = $this->title;
 ?>
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
@@ -25,7 +18,6 @@ $this->title = 'Create New Member';
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-
     <div class="posts-form">
     <?php $form = ActiveForm::begin(['options' => ['class' => 'col-md-5']]); $model->status = 2; ?>
         <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
@@ -34,8 +26,6 @@ $this->title = 'Create New Member';
         <?= $form->field($model, 'username')->textInput() ?>
         <?= $form->field($model, 'password')->passwordInput() ?>
         <?= $form->field($model, 'confirm_password')->passwordInput() ?>
-        <!-- set as default '2' for new comers -->
-        <?php $form->field($model, 'status')->dropDownList($status)  ?>
         <div class="form-group">
             <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
         </div>

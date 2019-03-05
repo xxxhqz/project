@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= $form->field($model, 'username') ?>
                 <?= $form->field($model, 'password')->passwordInput() ?>
                 <div style="color:#999;margin:1em 0">
-                    If you forgot your password you can <?php echo Html::a('reset it', ['/user/request-password-reset']) ?>. Or
+                    If you forgot your password you can <?php echo Html::a('reset it', ['/reset_password']) ?>. Or
                     <?php echo Html::a('sign up', ['/user/signup']) ?> for new account.
                 </div>
                 <div class="form-group">

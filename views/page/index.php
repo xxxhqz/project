@@ -9,6 +9,10 @@ $this->title = 'My Yii Application';
     <div class="jumbotron">
         <h1>Hey!</h1>
         <p class="lead">Congrats! you are finally here</p>
+
+        <?php if(isset($_SESSION['login_as']) && ($_SESSION['login_as'] == 'admin' || $_SESSION['login_as'] =='member')):
+            echo "<h3>You are logged in as ".$_SESSION['login_as']."</h3>";
+        endif;?>
     </div>
 
     <div class="body-content">

@@ -1,4 +1,21 @@
+<?php
+$user_id = $_SESSION['current_user']->id;
+?>
+
 <div class="container">
+    <br>
+    <h3>Admin</h3>
+	<div class="row">
+        <div class="col-md-3">
+            <a href="/admin/view?id=<?=$user_id?>" class="btn btn-primary btn-lg btn-block btn-huge">View Personal Personal</a>
+        </div>
+        <div class="col-md-3">
+            <a href="/admin/update?id=<?=$user_id?>" class="btn btn-primary btn-lg btn-block btn-huge">Edit Personal Details</a>
+        </div>
+        <div class="col-md-3">
+            <!-- <a href="#" class="btn btn-primary btn-lg btn-block btn-huge">Test button</a> -->
+        </div>
+	</div>
     <br>
     <h3>Members</h3>
 	<div class="row">

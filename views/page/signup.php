@@ -1,27 +1,42 @@
 <?php
+
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-/**
- * @var yii\web\View $this
- * @var yii\widgets\ActiveForm $form
- * @var \frontend\models\SignupForm $model
- */
-$this->title = 'Signup';
-$this->params['breadcrumbs'][] = $this->title;
+
+$this->title = 'Register as a New Member';
 ?>
-<div class="site-signup">
-    <h1><?= Html::encode($this->title) ?></h1>
-    <p>Please fill out the following fields to signup:</p>
-    <div class="row">
-        <div class="col-lg-5">
-            <?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
-            <?= $form->field($model, 'username') ?>
-                <?= $form->field($model, 'email') ?>
-                <?= $form->field($model, 'password')->passwordInput() ?>
-            <div class="form-group">
-            <?= Html::submitButton('Signup', ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
-            </div>
-<?php ActiveForm::end(); ?>
-        </div>
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page"><?=$this->title?></li>
+  </ol>
+</nav>
+
+<div class="signup">
+
+    <?php if (Yii::$app->session->hasFlash('successRegister')): ?>
+
+    <div class="alert alert-success">
+        You have successfully registered as a new member <a href="/login">Login now</a> ?
     </div>
+    <?php else: ?>
+
+    <h1><?= Html::encode($this->title) ?></h1>
+
+    <div class="posts-form">
+    <?php $form = ActiveForm::begin(['options' => ['class' => 'col-md-5']]); $model->status = 2; ?>
+        <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+        <?= $form->field($model, 'address')->textarea(['rows' => 3]) ?>
+        <?= $form->field($model, 'email')->textInput() ?>
+        <?= $form->field($model, 'username')->textInput() ?>
+        <?= $form->field($model, 'password')->passwordInput() ?>
+        <?= $form->field($model, 'confirm_password')->passwordInput() ?>
+
+        <div class="form-group">
+            <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        </div>
+    <?php ActiveForm::end(); ?>
+
+    </div>
+    <?php endif; ?>
 </div>

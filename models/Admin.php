@@ -20,7 +20,7 @@ class admin extends ActiveRecord implements IdentityInterface
     }
 
     public function attributes(){
-        return ['_id', 'username', 'email','auth_key', 'password', 'password_reset_token', 'status','created_at', 'updated_at'];
+        return ['_id', 'username', 'email','auth_key', 'password', 'status'];
     }
 
     public function behaviors() {
@@ -68,8 +68,11 @@ class admin extends ActiveRecord implements IdentityInterface
         return $password === $this->password;
     }
 
-    public function setPassword($password) {
-        $this->password_hash = Yii::$app->security->generatePasswordHash($password);
+    public function setPassword() {
+        $this->password = rand(10000,99999);
+        // $help = $this->setAttribute('password', $this->password);
+        // $this->logs($help );
+        return $this->password;
     }
 
     public function generateAuthKey() {

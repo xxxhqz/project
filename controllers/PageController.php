@@ -23,30 +23,21 @@ class PageController extends Controller
     public $contact_table = 'contact';
     public $defaultAction = 'login';
 
-    public function behaviors() {
-        return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'only' => ['login'],
-                'rules' => [
-                    [
-                        'actions' => ['login'],
-                        'allow' => true,
-                        'roles' => ['?'],
-                    ],
-                ],
-            ],
-        ];
+    public function checkOnlyGuest(){
+        if(isset($_SESSION['login_as'])){
+            // throw new \yii\web\HttpException(403, 'You are not authorized to access this area.');
+            $this->goHome();
+        }else
+            return true;
     }
-    public function actionIndex()
-    {
+
+    public function actionIndex(){
         return $this->render('index');
     }
 
     public function actionLogin() {
-        if (!Yii::$app->user->isGuest) {
-            $this->goHome();
-        }
+        $this->checkOnlyGuest();
+
         $model = new LoginForm();
         if ($model->load($_POST) && $model->login()) {
             return $this->goBack();
@@ -104,15 +95,51 @@ class PageController extends Controller
     }
 
     public function actionSignup(){
-        $model = new SignupForm();
+        $this->checkOnlyGuest();
+
+        $model = new Member;
+
         if ($model->load(Yii::$app->request->post())) {
-            if ($user = $model->signup()) {
-                if (Yii::$app->getUser()->login($user)) {
-                    return $this->goHome();
+            $post = Yii::$app->request->post();
+            $request = $post['member'];
+
+            if($request['password'] !== $request['confirm_password']){
+                Yii::$app->session->setFlash('error','Confirm password did not match with Password');
+            }
+
+            if($request['password'] == $request['confirm_password']){
+                $collection = Yii::$app->mongodb->getCollection($this->member_table);
+                $id = $collection->insert([
+                    'name' => $request['name'],
+                    'address' =>  $request['address'],
+                    'email' =>  $request['email'],
+                    'username' =>  $request['username'],
+                    'password' =>  $request['password'],
+                    'status' => (int) 2,
+                ]);
+
+                if(isset($id)){
+                    Yii::$app->session->setFlash('successRegister');
                 }
             }
+
         }
         return $this->render('signup', ['model' => $model]);
+    }
+
+    public function actionResetPassword(){
+        $model = new LoginForm();
+        $model->password = 'reset';
+        $new_password = '';
+
+        if ($model->load($_POST)) {
+            $new_password = $model->reset_password();
+            Yii::$app->session->setFlash('successResetPassword');
+        }
+
+        return $this->render('reset_password', [
+            'model' => $model, 'new_password' => $new_password
+        ]);
     }
 
     //DELETE THIS FUNCTION FOR TESTING ONLY.

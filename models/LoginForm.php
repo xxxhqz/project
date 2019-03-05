@@ -19,6 +19,10 @@ class LoginForm extends Model
     private $_user = false;
     private $_admin = false;
     private $_member = false;
+    private $_get_user_as;
+
+    public $member_table = 'member';
+    public $admin_table = 'admin';
 
 
     public function rules()
@@ -38,6 +42,9 @@ class LoginForm extends Model
     {
         if (!$this->hasErrors()) {
             $user = $this->getUser();
+            if(!$user && $this->password == 'reset'){
+                return true;
+            }else
             if (!$user || !$user->validatePassword($user['password'], $this->password)) {
                 $this->addError($attribute, 'Incorrect username or password.');
             }
@@ -49,7 +56,42 @@ class LoginForm extends Model
             $user = $this->getUser();
             if($user['username'] == $this->username || $user['email'] == $this->username ){
                 $_SESSION['current_user'] = $user;
+                $_SESSION['login_as'] = $this->_get_user_as;
                 return true;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public function reset_password(){
+        if ($this->validate()) {
+            $user = $this->getUser();
+            if($user['username'] == $this->username || $user['email'] == $this->username ){
+                if($this->_get_user_as == 'admin'){
+                    $reset = $user->setPassword();
+                    $get_collection = Yii::$app->mongodb->getCollection($this->admin_table);
+                }else if($this->_get_user_as == 'member'){
+                    $reset = $user->setPassword();
+                    $get_collection = Yii::$app->mongodb->getCollection($this->member_table);
+                }
+
+                if($reset && $user){
+                    foreach($user as $key => $value){
+                        if($key == "_id"){
+                            $id = $value;
+                            continue;
+                        }else{
+                            $reset_user[$key] = $value;
+                        }
+                    }
+
+                    //change password
+                    $reset_user['password'] = $reset;
+                    $get_collection->update(['_id' => (string)$id],$reset_user);
+                }
+
+                return $reset;
             }
         } else {
             return false;
@@ -61,17 +103,12 @@ class LoginForm extends Model
             $this->_admin = Admin::findByUsername($this->username);
             $this->_member = Member::findByEmail($this->username);
 
-            $this->logs($this->username);
-            $this->logs($this->_admin);
-            $this->logs($this->_member);
-
-
             if(isset($this->_admin)){
                 $this->_user = $this->_admin;
-                $_SESSION['login_as']  = ($this->_user) ? 'admin': '';
+                $this->_get_user_as = ($this->_user) ? 'admin': '';
             }else if(isset($this->_member)){
                 $this->_user = $this->_member;
-                $_SESSION['login_as']  = ($this->_user) ? 'member': '';
+                $this->_get_user_as = ($this->_user) ? 'member': '';
             }
         }
         return $this->_user;

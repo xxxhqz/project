@@ -25,7 +25,7 @@ $this->title = 'Members List';
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a('Create a Member', ['member_create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Create New Member', ['member_create'], ['class' => 'btn btn-success']) ?>
     </p>
 <br/>
     Total Member =  {{count}}
@@ -34,25 +34,27 @@ $this->title = 'Members List';
             <tr>
                 <th>#</th>
                 <th>Name</th>
-                <th>Address</th>
+                <th>Username</th>
                 <th>Email</th>
+                <th>Address</th>
                 <th>Status</th>
-                <th>Action</th>
+                <th><center>Action</center></th>
             </tr>
         </thead>
         <tbody>
             <tr v-for="(member, index)  in members" v:on="table_row_color(member.status)">
                 <td>{{ index+1 }}</td>
                 <td>{{ member.name }}</td>
-                <td>{{ member.address }}</td>
+                <td>{{ member.username }}</td>
                 <td>{{ member.email }}</td>
+                <td>{{ member.address }}</td>
                 <td><span v-if="member.status == 2" class="badge progress-bar-danger">NOT ACTIVE</span>
                 <span v-else="member.status == 2" class="badge progress-bar-success">ACTIVE</span></td>
-                <td>
+                <td><center>
                     <a v-bind:href="'member_view?id='+ member._id.$oid"><span class="glyphicon glyphicon-eye-open"></span></a>&nbsp;
                     <a v-bind:href="'member_update?id='+ member._id.$oid"><span class="glyphicon glyphicon-pencil"></span></a>&nbsp;
                     <a v-on:click="deleteThis(member)"><span class="glyphicon glyphicon-remove"></span></a>
-                </td>
+                </center></td>
             </tr>
         </tbody>
         <tfoot></tfoot>
